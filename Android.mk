@@ -27,7 +27,7 @@ LOCAL_CFLAGS += \
 
 #LOCAL_C_INCLUDES += $(LOCAL_PATH) external/jpeg
 
-LOCAL_SHARED_LIBRARIES := libcutils
+LOCAL_LDLIBS := -llog
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -39,4 +39,5 @@ LOCAL_MODULE:= facelbp_test
 LOCAL_MODULE_TAGS := eng
 LOCAL_SHARED_LIBRARIES := libfaceldp
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/src
+LOCAL_LDLIBS := -llog
 include $(BUILD_EXECUTABLE)

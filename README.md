@@ -19,6 +19,11 @@ configure options:::
     --disable-gtkdemo       disable gtk demo (default auto)
     --disable-sse2          disable SSE2 optimizations (default auto)
 
+To build with Android:
+
+    export NDK_PROJECT_PATH=.
+    ndk-build NDK_APPLICATION_MK=./Application.mk
+
 Dependency
 ----------
 libxml-2.0 for convert OpenCV facial xml to this program facial data format.

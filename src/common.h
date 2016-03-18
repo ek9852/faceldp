@@ -19,10 +19,14 @@
 #ifndef _COMMON_H
 #define _COMMON_H
 
-#ifdef ANDROID
+#ifdef __ANDROID__
 
 #define LOG_TAG __FILE__
-#include <cutils/log.h>
+#include <android/log.h>
+
+#define ALOGD(...) ((void)__android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__))
+#define ALOGE(...) ((void)__android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__))
+#define ALOGW(...) ((void)__android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__))
 
 #else
 #include <stdio.h>
