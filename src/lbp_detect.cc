@@ -351,7 +351,7 @@ load_lbp_data(struct lbp *l)
     std::ifstream in;
     int i, j;
 
-    in.open(DATADIR"/"DATA_FILE_PATH);
+    in.open(DATADIR "/" DATA_FILE_PATH);
 
     if (in.fail()) {
         /* try local directory */
