@@ -265,12 +265,12 @@ face_detector_lbp_tracking(struct lbp *l, unsigned int *img, struct face *fa, in
 #endif
     /* return faces detected after merging */
     if (l->detected_r.size() > (unsigned int)*maxfaces) {
-        LOGW("User provided maxface size not large enough");
+        ALOGW("User provided maxface size not large enough");
     } else {
         *maxfaces = l->detected_r.size();
     }
 
-    LOGD("Tracking LBP tested: %ld", tasks.size());
+    ALOGD("Tracking LBP tested: %ld", tasks.size());
     
     for (i = 0; i < *maxfaces; i++) {
         fa[i].x = l->detected_r[i].x;
@@ -310,12 +310,12 @@ face_detector_lbp_detect(struct lbp *l, unsigned int *img, struct face *fa, int 
 
     /* return faces detected after merging */
     if (l->detected_r.size() > (unsigned int)*maxfaces) {
-        LOGW("User provided maxface size not large enough");
+        ALOGW("User provided maxface size not large enough");
     } else {
         *maxfaces = l->detected_r.size();
     }
 
-    LOGD("LBP tested: %ld", l->tasks.size());
+    ALOGD("LBP tested: %ld", l->tasks.size());
     
     for (i = 0; i < *maxfaces; i++) {
         fa[i].x = l->detected_r[i].x;
@@ -334,7 +334,7 @@ dump_stages_info(struct lbp *l)
 {
     int i, total_weak_classifiers;
 
-    LOGD("Num Of stages: %d", l->data.num_stages);
+    ALOGD("Num Of stages: %d", l->data.num_stages);
 
     total_weak_classifiers = 0;
 
@@ -342,7 +342,7 @@ dump_stages_info(struct lbp *l)
         total_weak_classifiers += l->data.s[i].num_weak_classifiers;
     }
 
-    LOGD("Total weak classifiers: %d", total_weak_classifiers);
+    ALOGD("Total weak classifiers: %d", total_weak_classifiers);
 }
 
 static int
@@ -357,7 +357,7 @@ load_lbp_data(struct lbp *l)
         /* try local directory */
         in.open(DATA_FILE_PATH);
         if (in.fail()) {
-            LOGE("Cannot open data file: %s", DATA_FILE_PATH);
+            ALOGE("Cannot open data file: %s", DATA_FILE_PATH);
             return -EIO;
         }
     }
@@ -366,7 +366,7 @@ load_lbp_data(struct lbp *l)
 
     if (in.fail() || in.eof() || (l->data.num_stages <= 0)) {
         l->data.num_stages = 0;
-        LOGE("Unexpected end of file %s", DATA_FILE_PATH);
+        ALOGE("Unexpected end of file %s", DATA_FILE_PATH);
         return -EIO;
     }
 
@@ -375,7 +375,7 @@ load_lbp_data(struct lbp *l)
     for (i = 0; i < l->data.num_stages; i++) {
         in >> l->data.s[i].num_weak_classifiers >> l->data.s[i].stage_threshold;
         if (in.fail() || in.eof() || (l->data.s[i].num_weak_classifiers <= 0)) {
-            LOGE("Unexpected end of file %s, stage: %d, weak_classifiers: %d", DATA_FILE_PATH, i + 1, l->data.s[i].num_weak_classifiers);
+            ALOGE("Unexpected end of file %s, stage: %d, weak_classifiers: %d", DATA_FILE_PATH, i + 1, l->data.s[i].num_weak_classifiers);
             l->data.s[i].num_weak_classifiers = 0;
             return -EIO;
         }
@@ -397,7 +397,7 @@ load_lbp_data(struct lbp *l)
     in >> l->data.num_rects;
     if (in.fail() || in.eof() || (l->data.num_rects <= 0)) {
         l->data.num_rects = 0;
-        LOGE("Unexpected end of file %s", DATA_FILE_PATH);
+        ALOGE("Unexpected end of file %s", DATA_FILE_PATH);
         return -EIO;
     }
     l->data.r = (struct lbp_rect *)calloc(l->data.num_rects, sizeof(struct lbp_rect));
@@ -405,7 +405,7 @@ load_lbp_data(struct lbp *l)
         in >> l->data.r[i].x >> l->data.r[i].y >> l->data.r[i].w >> l->data.r[i].h;
     }
     if (in.fail()) {
-        LOGE("Unexpected end of file %s", DATA_FILE_PATH);
+        ALOGE("Unexpected end of file %s", DATA_FILE_PATH);
         return -EIO;
     }
 

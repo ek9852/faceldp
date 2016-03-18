@@ -79,7 +79,7 @@ load_cl_file(size_t *len, const char *file)
     char *src;
     int fd = open(file, O_RDONLY);
     if (fd < 0) {
-        LOGE("Failed to open cl file");
+        ALOGE("Failed to open cl file");
         return NULL;
     }
     size_t size = lseek(fd, 0, SEEK_END);
@@ -88,7 +88,7 @@ load_cl_file(size_t *len, const char *file)
     src = (char *)malloc(size);
     read_size = read(fd, src, size);
     if (read_size != size) {
-        LOGE("Read cl file failed");
+        ALOGE("Read cl file failed");
         free(src);
         close(fd);
         return NULL;
@@ -116,30 +116,30 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
     cl_platform_id platform0;
     err = clGetPlatformIDs(1, &platform0, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to get cl platforms, %d", err);
+        ALOGE("Failed to get cl platforms, %d", err);
         goto err1;
     }
 
     err = clGetDeviceIDs(platform0, CL_DEVICE_TYPE_CPU, 1, &cl->device_id, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to create a device group, %d", err);
+        ALOGE("Failed to create a device group, %d", err);
         goto err1;
     }
 
     cl_bool image_support;
     err = clGetDeviceInfo(cl->device_id, CL_DEVICE_IMAGE_SUPPORT, sizeof(image_support), &image_support, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to get device info %d", err);
+        ALOGE("Failed to get device info %d", err);
         goto err1;
     }
-    LOGD("Device support image: %d", image_support);
+    ALOGD("Device support image: %d", image_support);
     cl->cl_image_support  = image_support ? 1 : 0;
     /* REVISIST opencl does not support unsigned int 32 bits image to do linear interpolation, disable it for now, it is broken */
     cl->cl_image_support  = 0; 
 
     cl->context = clCreateContext(0, 1, &cl->device_id, NULL, NULL, &err);
     if (!cl->context) {
-        LOGE("Failed to create a compute context!");
+        ALOGE("Failed to create a compute context!");
         goto err1;
     }
  
@@ -172,14 +172,14 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
                   &err);
 #endif
         if (err != CL_SUCCESS) {
-            LOGW("Create image texture failed, fallback using non-image texture cl, err: %d", err);
+            ALOGW("Create image texture failed, fallback using non-image texture cl, err: %d", err);
             cl->cl_image_support = 0;
         }
     }
   
     cl->commands = clCreateCommandQueue(cl->context, cl->device_id, 0, &err);
     if (!cl->commands) {
-        LOGE("Failed to create a command commands!");
+        ALOGE("Failed to create a command commands!");
         goto err2;
     }
 
@@ -187,14 +187,14 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
     char *kernel_src;
     kernel_src  = load_cl_file(&src_length, cl->cl_image_support ? DATADIR"/"CL_IMAGE_FILE_PATH : DATADIR"/"CL_FILE_PATH);
     if (!kernel_src) {
-        LOGE("Failed to load cl!");
+        ALOGE("Failed to load cl!");
         goto err3;
     }
  
     cl->program = clCreateProgramWithSource(cl->context, 1, (const char **) &kernel_src, &src_length, &err);
     free(kernel_src);
     if (!cl->program) {
-        LOGE("Failed to create compute program!");
+        ALOGE("Failed to create compute program!");
         goto err3;
     }
 
@@ -206,15 +206,15 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
         size_t len;
         char buffer[8 * 1024];
  
-        LOGE("Failed to build program executable!");
+        ALOGE("Failed to build program executable!");
         clGetProgramBuildInfo(cl->program, cl->device_id, CL_PROGRAM_BUILD_LOG, sizeof(buffer), buffer, &len);
-        LOGE("%s", buffer);
+        ALOGE("%s", buffer);
         goto err4;
     }
  
     cl->kernel = clCreateKernel(cl->program, "lbp", &err);
     if (!cl->kernel || err != CL_SUCCESS) {
-        LOGE("Failed to create compute kernel!");
+        ALOGE("Failed to create compute kernel!");
         goto err4;
     }
  
@@ -250,27 +250,27 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
         !cl->input_stage || !cl->input_task || !cl->input_subtask ||
         !cl->input_img || !cl->output_result_counter ||
         !cl->output_result) {
-        LOGE("Failed to allocate device memory!");
+        ALOGE("Failed to allocate device memory!");
         goto err6;
     }    
     err = clEnqueueWriteBuffer(cl->commands, cl->input_rect, CL_TRUE, 0, sizeof(struct lbp_rect) * data->num_rects, data->r, 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to source array!");
+        ALOGE("Failed to write to source array!");
         goto err6;
     }
     err = clEnqueueWriteBuffer(cl->commands, cl->input_classifier, CL_TRUE, 0, sizeof(struct weak_classifier) * classifiers.size(), classifiers.data(), 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to source array!");
+        ALOGE("Failed to write to source array!");
         goto err6;
     }
     err = clEnqueueWriteBuffer(cl->commands, cl->input_stage, CL_TRUE, 0, sizeof(struct cl_stage) * data->num_stages, stages.data(), 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to source array!");
+        ALOGE("Failed to write to source array!");
         goto err6;
     }
     err = clEnqueueWriteBuffer(cl->commands, cl->input_task, CL_TRUE, 0, sizeof(struct lbp_task) * cl->full_tasks->size(), cl->full_tasks->data(), 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to source array!");
+        ALOGE("Failed to write to source array!");
         goto err6;
     }
     err = clSetKernelArg(cl->kernel, 0, sizeof(cl_mem), &cl->input_rect);
@@ -285,7 +285,7 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
         err |= clSetKernelArg(cl->kernel, 6, sizeof(cl_mem), &cl->input_img);
     }
     if (err != CL_SUCCESS) {
-        LOGE("Error: Failed to set kernel arguments! %d", err);
+        ALOGE("Error: Failed to set kernel arguments! %d", err);
         goto err6;
     }
 
@@ -342,26 +342,26 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
 
     err = clEnqueueWriteBuffer(cl->commands, cl->input_img, CL_TRUE, 0, sizeof(unsigned int) * cl->width * cl->height, img, 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to source image!");
+        ALOGE("Failed to write to source image!");
         return -1;
     }
 
     // select to run a full run, or just scan previous results
     if ((tasks != NULL) && (tasks->size() < cl->full_tasks->size())) {
         if (tasks->size() == 0) {
-            LOGE("No task ?!");
+            ALOGE("No task ?!");
             return -1;
         }
         global  = tasks->size();
         cl_tasks = tasks;
         err = clEnqueueWriteBuffer(cl->commands, cl->input_subtask, CL_TRUE, 0, sizeof(struct lbp_task) * tasks->size(), tasks->data(), 0, NULL, NULL);
         if (err != CL_SUCCESS) {
-            LOGE("Failed to write to subtask %d", err);
+            ALOGE("Failed to write to subtask %d", err);
             return -1;
         }
         err = clSetKernelArg(cl->kernel, 3, sizeof(cl_mem), &cl->input_subtask);
         if (err != CL_SUCCESS) {
-            LOGE("Failed to set input sub task!");
+            ALOGE("Failed to set input sub task!");
             return -1;
         }
     } else {
@@ -369,7 +369,7 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
         cl_tasks = cl->full_tasks;
         err = clSetKernelArg(cl->kernel, 3, sizeof(cl_mem), &cl->input_task);
         if (err != CL_SUCCESS) {
-            LOGE("Failed to set input task!");
+            ALOGE("Failed to set input task!");
             return -1;
         }
     }
@@ -378,7 +378,7 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
     unsigned int result_count = 0;
     err = clEnqueueWriteBuffer(cl->commands, cl->output_result_counter, CL_TRUE, 0, sizeof(unsigned int), &result_count, 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Failed to write to result count!");
+        ALOGE("Failed to write to result count!");
         return -1;
     }
  
@@ -387,14 +387,14 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
         const size_t region[3] = {cl->width, cl->height, 1};
         err = clEnqueueWriteImage(cl->commands, cl->int_texture, CL_TRUE, origin, region, cl->width * sizeof(unsigned int), 0, img, 0, NULL, NULL);
         if (err != CL_SUCCESS) {
-            LOGE("Failed to write to int image texture !");
+            ALOGE("Failed to write to int image texture !");
             return -1;
         }
     }
  
     err = clEnqueueNDRangeKernel(cl->commands, cl->kernel, 1, NULL, &global, NULL, 0, NULL, NULL);
     if (err != CL_SUCCESS) {
-        LOGE("Error: Failed to execute kernel %d", err);
+        ALOGE("Error: Failed to execute kernel %d", err);
         return -1;
     }
  
@@ -404,7 +404,7 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
  
     err = clEnqueueReadBuffer(cl->commands, cl->output_result_counter, CL_TRUE, 0, sizeof(unsigned int), &detected_rects, 0, NULL, NULL );  
     if (err != CL_SUCCESS) {
-        LOGE("Error: Failed to read output array! %d", err);
+        ALOGE("Error: Failed to read output array! %d", err);
         return -1;
     }
 
@@ -414,7 +414,7 @@ cl_detect(struct lbp_cl *cl, unsigned int *img,
 
     err = clEnqueueReadBuffer(cl->commands, cl->output_result, CL_TRUE, 0, sizeof(unsigned int) * detected_rects, cl->detected_task_index, 0, NULL, NULL );  
     if (err != CL_SUCCESS) {
-        LOGE("Error: Failed to read output array! %d", err);
+        ALOGE("Error: Failed to read output array! %d", err);
         return -1;
     }
 

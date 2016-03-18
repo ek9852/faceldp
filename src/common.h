@@ -29,13 +29,13 @@
 #include <string.h>
 #include <errno.h>
 #ifdef DEBUG
-#define LOGW(fmt, ...) fprintf(stderr, "[WARNING] (%s:%d: errno: %s) " fmt "\n", __FILE__, __LINE__, strerror(errno), ##__VA_ARGS__)
-#define LOGD(fmt, ...) fprintf(stderr, "[DEBUG] (%s:%d) " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define ALOGW(fmt, ...) fprintf(stderr, "[WARNING] (%s:%d: errno: %s) " fmt "\n", __FILE__, __LINE__, strerror(errno), ##__VA_ARGS__)
+#define ALOGD(fmt, ...) fprintf(stderr, "[DEBUG] (%s:%d) " fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #else
-#define LOGW(fmt, ...) do{ } while ( false )
-#define LOGD(fmt, ...) do{ } while ( false )
+#define ALOGW(fmt, ...) do{ } while ( false )
+#define ALOGD(fmt, ...) do{ } while ( false )
 #endif
-#define LOGE(fmt, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) " fmt "\n", __FILE__, __LINE__, strerror(errno), ##__VA_ARGS__)
+#define ALOGE(fmt, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) " fmt "\n", __FILE__, __LINE__, strerror(errno), ##__VA_ARGS__)
 
 #endif
 
