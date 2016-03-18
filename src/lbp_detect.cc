@@ -51,7 +51,7 @@ struct lbp {
 };
 
 static inline unsigned int
-get_value_bilinear(unsigned int *img, float x, float y, int width, int height)
+get_value_bilinear(unsigned int *img, float x, float y, int width)
 {
     unsigned int pt[4];
     unsigned int *p = img + (int)x + (int)y * width;
@@ -75,7 +75,7 @@ get_value_bilinear(unsigned int *img, float x, float y, int width, int height)
 }
 
 static void
-get_interpolated_integral_value(struct lbp_rect *r, struct weak_classifier *c, unsigned int *img, int x, int y, int width, int height, float scale, unsigned int *p)
+get_interpolated_integral_value(struct lbp_rect *r, unsigned int *img, int x, int y, int width, float scale, unsigned int *p)
 {
     /*  0  1  2  3
      *  4  5  6  7
@@ -88,25 +88,25 @@ get_interpolated_integral_value(struct lbp_rect *r, struct weak_classifier *c, u
     fx = (float)x + r->x * scale;
     fy = (float)y + r->y * scale;
 
-    i[0] = get_value_bilinear(img, fx,                  fy, width, height);
-    i[1] = get_value_bilinear(img, fx + r->w*scale,     fy, width, height);
-    i[2] = get_value_bilinear(img, fx + r->w*scale * 2, fy, width, height);
-    i[3] = get_value_bilinear(img, fx + r->w*scale * 3, fy, width, height);
+    i[0] = get_value_bilinear(img, fx,                  fy, width);
+    i[1] = get_value_bilinear(img, fx + r->w*scale,     fy, width);
+    i[2] = get_value_bilinear(img, fx + r->w*scale * 2, fy, width);
+    i[3] = get_value_bilinear(img, fx + r->w*scale * 3, fy, width);
 
-    i[4] = get_value_bilinear(img, fx,                  fy + r->h*scale, width, height);
-    i[5] = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale, width, height);
-    i[6] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale, width, height);
-    i[7] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale, width, height);
+    i[4] = get_value_bilinear(img, fx,                  fy + r->h*scale, width);
+    i[5] = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale, width);
+    i[6] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale, width);
+    i[7] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale, width);
 
-    i[8]  = get_value_bilinear(img, fx,                  fy + r->h*scale * 2, width, height);
-    i[9]  = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale * 2, width, height);
-    i[10] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale * 2, width, height);
-    i[11] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale * 2, width, height);
+    i[8]  = get_value_bilinear(img, fx,                  fy + r->h*scale * 2, width);
+    i[9]  = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale * 2, width);
+    i[10] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale * 2, width);
+    i[11] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale * 2, width);
 
-    i[12] = get_value_bilinear(img, fx,                  fy + r->h*scale * 3, width, height);
-    i[13] = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale * 3, width, height);
-    i[14] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale * 3, width, height);
-    i[15] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale * 3, width, height);
+    i[12] = get_value_bilinear(img, fx,                  fy + r->h*scale * 3, width);
+    i[13] = get_value_bilinear(img, fx + r->w*scale,     fy + r->h*scale * 3, width);
+    i[14] = get_value_bilinear(img, fx + r->w*scale * 2, fy + r->h*scale * 3, width);
+    i[15] = get_value_bilinear(img, fx + r->w*scale * 3, fy + r->h*scale * 3, width);
 
     p[0] = (i[0] - i[1] - i[4] + i[5]);
     p[1] = (i[1] - i[2] - i[5] + i[6]);
@@ -129,7 +129,7 @@ lbp_classify(struct lbp_rect *r, struct weak_classifier *c, unsigned int *img, i
     unsigned int p[9];
     unsigned char lbp_code;
 
-    get_interpolated_integral_value(&r[c->rect_idx], c, img, x, y, width, height, scale, p);
+    get_interpolated_integral_value(&r[c->rect_idx], img, x, y, width, scale, p);
 
     lbp_code = 0;
     if (p[0] >= p[4]) lbp_code |= 128;
