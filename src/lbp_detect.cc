@@ -354,8 +354,12 @@ load_lbp_data(struct lbp *l)
     in.open(DATADIR"/"DATA_FILE_PATH);
 
     if (in.fail()) {
-        LOGE("Cannot open data file: %s", DATA_FILE_PATH);
-        return -EIO;
+        /* try local directory */
+        in.open(DATA_FILE_PATH);
+        if (in.fail()) {
+            LOGE("Cannot open data file: %s", DATA_FILE_PATH);
+            return -EIO;
+        }
     }
 
     in >> l->data.feature_height >> l->data.feature_width >> l->data.num_stages;
