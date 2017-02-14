@@ -159,7 +159,7 @@ lbp_cl_init(struct lbp_data *data, struct lbp_para *para,
         desc.buffer           = NULL;
         desc.num_mip_levels   = 0;
         desc.num_samples      = 0;
-        cl->int_texture = clCreateImage(Context::getContext()->impl->clContext, CL_MEM_READ_ONLY, &format, &desc, NULL, &err);
+        cl->int_texture = clCreateImage(cl->context, CL_MEM_READ_ONLY, &format, &desc, NULL, &err);
 #else
         cl->int_texture = clCreateImage2D(
                   cl->context,
