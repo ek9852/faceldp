@@ -55,7 +55,7 @@ AM_CONDITIONAL([USE_OPENCL], [test "$enable_opencl" = "yes"])
 AC_ARG_ENABLE(gtkdemo,
 [  --disable-gtkdemo       disable gtk demo (default auto)],,[
   case "${host_os}" in
-    *linux*)
+    *linux* | darwin* )
       enable_gtkdemo="yes"
       ;;
     *)
