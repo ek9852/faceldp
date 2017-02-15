@@ -50,8 +50,18 @@ find_video_src (void)
 {
   GstStateChangeReturn sret;
   GstElement *src;
-#if 1
+#if __linux__
   if ((src = gst_element_factory_make ("v4l2src", NULL))) {
+    sret = gst_element_set_state (src, GST_STATE_READY);
+    if (sret == GST_STATE_CHANGE_SUCCESS)
+      return src;
+
+    gst_element_set_state (src, GST_STATE_NULL);
+  }
+  gst_object_unref (src);
+#endif
+#if __APPLE__
+  if ((src = gst_element_factory_make ("avfvideosrc", NULL))) {
     sret = gst_element_set_state (src, GST_STATE_READY);
     if (sret == GST_STATE_CHANGE_SUCCESS)
       return src;
