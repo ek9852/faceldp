@@ -57,8 +57,8 @@ find_video_src (void)
       return src;
 
     gst_element_set_state (src, GST_STATE_NULL);
+    gst_object_unref (src);
   }
-  gst_object_unref (src);
 #endif
 #if __APPLE__
   if ((src = gst_element_factory_make ("avfvideosrc", NULL))) {
@@ -67,8 +67,8 @@ find_video_src (void)
       return src;
 
     gst_element_set_state (src, GST_STATE_NULL);
+    gst_object_unref (src);
   }
-  gst_object_unref (src);
 #endif
   if ((src = gst_element_factory_make ("videotestsrc", NULL))) {
     sret = gst_element_set_state (src, GST_STATE_READY);
@@ -76,8 +76,8 @@ find_video_src (void)
       return src;
 
     gst_element_set_state (src, GST_STATE_NULL);
+    gst_object_unref (src);
   }
-  gst_object_unref (src);
 
   return NULL;
 }
