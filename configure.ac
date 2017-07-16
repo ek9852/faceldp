@@ -71,6 +71,14 @@ AS_IF([test "${enable_gtkdemo}" != "no"], [
 ])
 AM_CONDITIONAL([ENABLE_GTKDEMO], [test "$enable_gtkdemo" = "yes"])
 
+enable_opencvdemo=yes
+# check using opencv capture demo
+PKG_CHECK_MODULES(OPENCV, [opencv >= 2.0],, [
+  AC_MSG_WARN([${OPENCV_PKG_ERRORS}.])
+  enable_opencvdemo=no
+])
+AM_CONDITIONAL([ENABLE_OPENCVDEMO], [test "$enable_opencvdemo" = "yes"])
+
 # check for sse2 intrinsics
 AC_ARG_ENABLE(sse2,
 [  --disable-sse2          disable SSE2 optimizations (default auto)],,[
@@ -124,6 +132,7 @@ AC_OUTPUT
 echo "
 
 Configuration
+        OpenCV                     : ${enable_opencvdemo}
         GTK Demo                   : ${enable_gtkdemo}
         Using OpenCL               : ${enable_opencl}
 

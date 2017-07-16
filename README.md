@@ -30,7 +30,7 @@ libxml-2.0 for convert OpenCV facial xml to this program facial data format.
 If gtk v4l2 video demo is needed then 
 gtk+-3.0, clutter-gst-2.0, clutter-gtk-1.0, gstreamer-plugins-base-1.0, gstreamer-base-1.0, gstreamer-1.0, gstreamer-video-1.0, gstreamer-app-1.0 
 are required
-
+If opencv video demo is needed than opencv2 is required
 Usage
 -----
 To generate a raw grayscale image using ImageMagick::
@@ -45,6 +45,10 @@ For GTK demo with web camera or video file, run::
 
     $ facelbp_gtk_demo # for using web camera
     $ facelbp_gtk_demo -f <video.mp4> # for testing with a video file
+
+For OpenCV (only use for windowing system) with web camera demo, run::
+
+    $ facelbp_opencv_demo # for using web camera
 
 Performance
 -----------
