@@ -31,6 +31,7 @@ If gtk v4l2 video demo is needed then
 gtk+-3.0, clutter-gst-2.0, clutter-gtk-1.0, gstreamer-plugins-base-1.0, gstreamer-base-1.0, gstreamer-1.0, gstreamer-video-1.0, gstreamer-app-1.0 
 are required
 If opencv video demo is needed than opencv2 is required
+
 Usage
 -----
 To generate a raw grayscale image using ImageMagick::
